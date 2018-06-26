@@ -1,16 +1,9 @@
-const express = require('express');
-const User = require('./../models/user');
+const User = require('./../../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config/auth')
+const { secret } = require('../../config/auth')
 
-
-
-
-//define router
-const router = express.Router();
-
-router.post('/register', async (req, res) => {
+const register = async (req, res) => {
 
     const { email } = req.body;
 
@@ -35,10 +28,10 @@ router.post('/register', async (req, res) => {
             error: 'registration faleid'
         });
     }
-});
+}
 
 
-router.post('/authenticate', async (req, res) => {
+const authenticate = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select('+password');
@@ -54,25 +47,23 @@ router.post('/authenticate', async (req, res) => {
 
     user.password = undefined;
 
-
-
-
     res.json({
         user: user,
         token: generateToken(user.id)
     })
-
-});
-
+}
 
 //function generate token
 
-function generateToken(id) {
+const generateToken = (id) => {
     return jwt.sign({ id: id }, secret, {
         expiresIn: 3600
     });
 }
 
+module.exports = {
+    register,
+    authenticate
+}
 
-
-module.exports = app => app.use('/auth', router);
+// module.exports = app => app.use('/auth', router);

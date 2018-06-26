@@ -1,18 +1,17 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require('express')
+const bodyParser = require('body-parser')
+const app = express()
 
 //controllers
-const authController = require('./controllers/authController');
-const userController = require('./controllers/userController');
+const auth = require('./api/auth/')
+const user = require('./api/user/')
 
-const app = express();
-
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // Router Controller
-authController(app);
-userController(app);
+auth(app)
 
+user(app)
 
-app.listen(3001, console.log('rodando na porta 3001'));
+app.listen(3001, console.log('rodando na porta 3001'))
