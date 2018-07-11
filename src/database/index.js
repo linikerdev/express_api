@@ -1,6 +1,8 @@
+require('dotenv').config()
+
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/noderest');
+mongoose.connect(process.env.URL_MONGODB);
 
 mongoose.Promise = global.Promise;
 

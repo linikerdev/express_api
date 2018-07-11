@@ -1,18 +1,27 @@
-const express = require('express');
-const User = require('./../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { secret } = require('../config/auth')
+const { secret } = require('../../config/auth.json')
 
 
+const User = require('./model');
 
 
-//define router
-const router = express.Router();
+const allUsers = async (req, res) => {
+    try {
+        let data = await User.find()
+        res.status(200).json(data)
+    } catch (error) {
+        return res.status(400).json({
+            message: 'registration faleid',
+            err: err.message
+        });
+    }
 
-router.post('/register', async (req, res) => {
 
-    const { email } = req.body;
+}
+
+const createUser = async (req, res) => {
+    const { email } = req.body
 
     try {
 
@@ -21,7 +30,6 @@ router.post('/register', async (req, res) => {
                 error: `Usuário ${email} já existe na base de dados`
             });
         }
-
         const user = await User.create(req.body);
 
         user.password = undefined;
@@ -32,13 +40,13 @@ router.post('/register', async (req, res) => {
         });
     } catch (err) {
         return res.status(400).json({
-            error: 'registration faleid'
+            error: 'registration faleid',
+            err: err.message
         });
     }
-});
+}
 
-
-router.post('/authenticate', async (req, res) => {
+const authenticate = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select('+password');
@@ -59,10 +67,7 @@ router.post('/authenticate', async (req, res) => {
         token: generateToken(user.id)
     })
 
-});
-
-
-//function generate token
+};
 
 function generateToken(id) {
     return jwt.sign({ id: id }, secret, {
@@ -71,5 +76,8 @@ function generateToken(id) {
 }
 
 
-
-module.exports = app => app.use('/auth', router);
+module.exports = {
+    allUsers,
+    createUser,
+    authenticate
+};
